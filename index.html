@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="styles.css" />
+		<title>BlackJack</title>
+	</head>
+	<body>
+		<header>
+			<div>
+				<button class="btnExit btn--hover">EXIT</button>
+				<button class="btn--hover btnRules">RULES</button>
+			</div>
+
+			<div class="pot">
+				<img src="images/chips.png" alt="" />
+				<div class="pot--amount">480</div>
+			</div>
+		</header>
+		<div class="dealer">
+			<div id="score--dealer" class="score">21</div>
+			<div class="nume nume--dealer">Dealer</div>
+		</div>
+		<div class="carti--dealer">
+			<!-- <img class="carte" src="images/10_of_diamonds.png" alt="" /> -->
+		</div>
+		<img class="logo" src="images/Logo.png" alt="" />
+
+		<button class="btnStart btn--hover">START</button>
+		<div class="player">
+			<div id="score--player" class="score">21</div>
+			<div class="nume nume--player">Player</div>
+		</div>
+		<div class="carti--player">
+			<!-- <img class="carte" src="images/10_of_clubs.png" alt="" /> -->
+		</div>
+		<div class="bet--amount">200</div>
+		<div class="btn">
+			<div class="btnContainer--play">
+				<button class="btnStand btn--hover">STAND ✋</button>
+				<button class="btnSplit btn--hover">SPLIT 🙌</button>
+				<button class="btnDouble btn--hover">DOUBLE 🔥</button>
+				<button class="btnHit btn--hover">HIT 🎯</button>
+			</div>
+			<div class="btnContainer--bet">
+				<div class="credit">
+					<button class="btnClear btn--hover">CLEAR</button>
+					<div class="credit--text">Credit:</div>
+					<div class="credit--amount">300</div>
+					<input class="input--bet" type="text" />
+					<button class="btnBet btn--hover">BET</button>
+				</div>
+				<button class="btnDeal btn--hover">DEAL</button>
+			</div>
+		</div>
+		<div class="modal modal--rules hidden">
+			<button class="close-modal close-modal-rules">&times;</button>
+			<h1>BlackJack rules:</h1>
+			<ul>
+				<li>BlackJack pays 3 to 2</li>
+				<li>Dealer mus hit on 16 and stay on 17</li>
+				<li>Insurence pays 2 to 1</li>
+			</ul>
+
+			<button class="btnNewGame btn--hover">New Game</button>
+		</div>
+		<div class="modal modal--win hidden">
+			<button class="close-modal close-modal-win">&times;</button>
+
+			<button class="btnNewGame btn--hover">New Game</button>
+		</div>
+		<div class="overlay hidden"></div>
+
+		<script src="script.js"></script>
+	</body>
+</html>
