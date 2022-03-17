@@ -103,10 +103,21 @@ const startGame = function () {
 	deck = createDeck();
 };
 startGame();
-const endGame = function (player) {
-	document.querySelector(
-		`.modal--win`
-	).innerHTML += `<div class="final-massage">${player} wins!</div>`;
+const endGame = function (player, multi) {
+	if (player === `Player`) {
+		document.querySelector(
+			`.modal--win`
+		).innerHTML += `<div class="final-massage">${player} wins!</div>
+		<div class="final-massage">You win ${
+			Number(betAmount.textContent) * multi
+		} $</div>`;
+	} else {
+		document.querySelector(
+			`.modal--win`
+		).innerHTML += `<div class="final-massage">${player} wins!</div>
+		`;
+	}
+
 	overlay.classList.remove(`hidden`);
 	modalWin.classList.remove(`hidden`);
 	indicatorJoc = false;
@@ -198,7 +209,6 @@ btnStand.addEventListener(`click`, function () {
 			Number(scorePlayer.textContent) <= 21 &&
 			Number(scoreDealer.textContent) !== Number(scorePlayer.textContent)
 		) {
-			endGame(`Player`);
 			if (
 				player1.valCarti.length === 2 &&
 				player1.valCarti.reduce((acc, elem) => acc + elem) === 21
@@ -206,15 +216,16 @@ btnStand.addEventListener(`click`, function () {
 				creditAmount.textContent =
 					Number(creditAmount.textContent) +
 					Number(betAmount.textContent) * 2.5;
+				endGame(`Player`, 2.5);
 			} else {
 				creditAmount.textContent =
 					Number(creditAmount.textContent) + Number(betAmount.textContent) * 2;
+				endGame(`Player`, 2);
 			}
 		} else if (
 			Number(scorePlayer.textContent) <= 21 &&
 			Number(scorePlayer.textContent) > Number(scoreDealer.textContent)
 		) {
-			endGame(`Player`);
 			if (
 				player1.valCarti.length === 2 &&
 				player1.valCarti.reduce((acc, elem) => acc + elem) === 21
@@ -222,12 +233,14 @@ btnStand.addEventListener(`click`, function () {
 				creditAmount.textContent =
 					Number(creditAmount.textContent) +
 					Number(betAmount.textContent) * 2.5;
+				endGame(`Player`, 2.5);
 			} else {
 				creditAmount.textContent =
 					Number(creditAmount.textContent) + Number(betAmount.textContent) * 2;
+				endGame(`Player`, 2);
 			}
 		} else {
-			endGame(`Everybody`);
+			endGame(`Everybody`, 1);
 			creditAmount.textContent =
 				Number(creditAmount.textContent) + Number(betAmount.textContent);
 		}
