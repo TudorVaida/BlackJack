@@ -34,8 +34,14 @@ const modalWin = document.querySelector(`.modal--win`);
 const overlay = document.querySelector(`.overlay`);
 
 let deck;
-
+let indicatorJoc;
 //////////////////////// FUNCTIONS ///////////////////////////
+const player1 = {
+	valCarti: [],
+};
+const dealer = {
+	valCarti: [],
+};
 const createDeck = function () {
 	class carte {
 		constructor(culoare, numar, valoare) {
@@ -63,6 +69,20 @@ const createDeck = function () {
 };
 const newGame = function () {
 	btnContainerPlay.classList.add(`hidden`);
+	btnContainerBet.classList.remove(`hidden`);
+	betAmount.textContent = `0`;
+	potAmount.textContent = `0`;
+	scoreDealer.textContent = `0`;
+	scorePlayer.textContent = `0`;
+	const carte = document.querySelectorAll(`.carte`);
+	carte.forEach((elem) => elem.classList.add(`hidden`));
+	const finalMassage = document.querySelectorAll(`.final-massage`);
+	finalMassage.forEach((elem) => elem.classList.add(`hidden`));
+	indicatorJoc = true;
+	deck = createDeck();
+};
+const startGame = function () {
+	btnContainerPlay.classList.add(`hidden`);
 	btnContainerBet.classList.add(`hidden`);
 	btnStart.classList.remove(`hidden`);
 	scoreDealer.classList.add(`hidden`);
@@ -74,15 +94,22 @@ const newGame = function () {
 	potAmount.textContent = `0`;
 	scoreDealer.textContent = `0`;
 	scorePlayer.textContent = `0`;
+	creditAmount.textContent = `500`;
+	const carte = document.querySelectorAll(`.carte`);
+	carte.forEach((elem) => elem.classList.add(`hidden`));
+	const finalMassage = document.querySelectorAll(`.final-massage`);
+	finalMassage.forEach((elem) => elem.classList.add(`hidden`));
+	indicatorJoc = true;
 	deck = createDeck();
 };
-newGame();
+startGame();
 const endGame = function (player) {
 	document.querySelector(
 		`.modal--win`
 	).innerHTML += `<div class="final-massage">${player} wins!</div>`;
 	overlay.classList.remove(`hidden`);
 	modalWin.classList.remove(`hidden`);
+	indicatorJoc = false;
 };
 const random = function (arr) {
 	return arr[Math.floor(Math.random() * deck.carti.length)];
@@ -99,7 +126,7 @@ const giveCard = function (player) {
 		? (scorePlayer.textContent = Number(scorePlayer.textContent) + card.valoare)
 		: (scoreDealer.textContent =
 				Number(scoreDealer.textContent) + card.valoare);
-
+	player1.valCarti.push(card.valoare);
 	deck.carti.splice(
 		deck.carti.findIndex((elem) => elem === card),
 		1
@@ -146,32 +173,65 @@ btnDeal.addEventListener(`click`, function () {
 	giveCard(`dealer`);
 });
 btnHit.addEventListener(`click`, function () {
-	if (Number(scorePlayer.textContent) < 21) {
+	if (Number(scorePlayer.textContent) < 21 && indicatorJoc) {
 		giveCard(`player`);
 	}
-	if (Number(scorePlayer.textContent) > 21) {
+	if (Number(scorePlayer.textContent) > 21 && indicatorJoc) {
 		giveCard(`dealer`);
 		endGame(`Dealer`);
 	}
 });
 btnStand.addEventListener(`click`, function () {
-	while (
-		Number(scoreDealer.textContent) < 21 &&
-		Number(scoreDealer.textContent) < 17
-	) {
-		giveCard(`dealer`);
+	if (indicatorJoc) {
+		while (
+			Number(scoreDealer.textContent) < 21 &&
+			Number(scoreDealer.textContent) < 17
+		) {
+			giveCard(`dealer`);
+		}
+		if (
+			Number(scoreDealer.textContent) <= 21 &&
+			Number(scoreDealer.textContent) > Number(scorePlayer.textContent)
+		) {
+			endGame(`Dealer`);
+		} else if (
+			Number(scorePlayer.textContent) <= 21 &&
+			Number(scoreDealer.textContent) !== Number(scorePlayer.textContent)
+		) {
+			endGame(`Player`);
+			if (
+				player1.valCarti.length === 2 &&
+				player1.valCarti.reduce((acc, elem) => acc + elem) === 21
+			) {
+				creditAmount.textContent =
+					Number(creditAmount.textContent) +
+					Number(betAmount.textContent) * 2.5;
+			} else {
+				creditAmount.textContent =
+					Number(creditAmount.textContent) + Number(betAmount.textContent) * 2;
+			}
+		} else if (
+			Number(scorePlayer.textContent) <= 21 &&
+			Number(scorePlayer.textContent) > Number(scoreDealer.textContent)
+		) {
+			endGame(`Player`);
+			if (
+				player1.valCarti.length === 2 &&
+				player1.valCarti.reduce((acc, elem) => acc + elem) === 21
+			) {
+				creditAmount.textContent =
+					Number(creditAmount.textContent) +
+					Number(betAmount.textContent) * 2.5;
+			} else {
+				creditAmount.textContent =
+					Number(creditAmount.textContent) + Number(betAmount.textContent) * 2;
+			}
+		} else {
+			endGame(`Everybody`);
+			creditAmount.textContent =
+				Number(creditAmount.textContent) + Number(betAmount.textContent);
+		}
 	}
-	if (
-		Number(scoreDealer.textContent) <= 21 &&
-		Number(scoreDealer.textContent) > Number(scorePlayer.textContent)
-	) {
-		endGame(`Dealer`);
-	} else if (
-		Number(scorePlayer.textContent) <= 21 &&
-		Number(scoreDealer.textContent) !== Number(scorePlayer.textContent)
-	) {
-		endGame(`Player`);
-	} else endGame(`Everybody`);
 });
 
 btnRules.addEventListener(`click`, function () {
@@ -182,18 +242,25 @@ btnNewGame.addEventListener(`click`, function () {
 	newGame();
 	overlay.classList.add(`hidden`);
 	modalRules.classList.add(`hidden`);
+	modalWin.classList.add(`hidden`);
+	console.log(`button pushed`);
 });
 btnCloseModalRules.addEventListener(`click`, function () {
 	overlay.classList.add(`hidden`);
 	modalRules.classList.add(`hidden`);
+	console.log(`button pushed`);
 });
 btnCloseModalWin.addEventListener(`click`, function () {
 	overlay.classList.add(`hidden`);
 	modalWin.classList.add(`hidden`);
+	console.log(`button pushed`);
 });
 
 overlay.addEventListener(`click`, function () {
 	overlay.classList.add(`hidden`);
 	modalRules.classList.add(`hidden`);
 	modalWin.classList.add(`hidden`);
+});
+btnExit.addEventListener(`click`, function () {
+	startGame();
 });
