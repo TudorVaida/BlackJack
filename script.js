@@ -70,6 +70,7 @@ const createDeck = function () {
 const newGame = function () {
 	btnContainerPlay.classList.add(`hidden`);
 	btnContainerBet.classList.remove(`hidden`);
+	inputBet.value = ` `;
 	betAmount.textContent = `0`;
 	potAmount.textContent = `0`;
 	scoreDealer.textContent = `0`;
@@ -90,6 +91,7 @@ const startGame = function () {
 	numePlayer.classList.add(`hidden`);
 	numeDealer.classList.add(`hidden`);
 	betAmount.classList.add(`hidden`);
+	inputBet.value = ` `;
 	betAmount.textContent = `0`;
 	potAmount.textContent = `0`;
 	scoreDealer.textContent = `0`;
