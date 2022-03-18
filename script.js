@@ -35,12 +35,17 @@ const overlay = document.querySelector(`.overlay`);
 
 let deck;
 let indicatorJoc;
+
 //////////////////////// FUNCTIONS ///////////////////////////
 const player1 = {
 	valCarti: [],
+	aces: [],
+	hasAce: false,
 };
-const dealer = {
+const dealer1 = {
 	valCarti: [],
+	aces: [],
+	hasAce: false,
 };
 const createDeck = function () {
 	class carte {
@@ -58,7 +63,7 @@ const createDeck = function () {
 	const deck = new pachet([]);
 	const culori = [`spades`, `hearts`, `clubs`, `diamonds`];
 	const numere = [2, 3, 4, 5, 6, 7, 8, 9, 10, `jack`, `queen`, `king`, `ace`];
-	const valoare = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11];
+	const valoare = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 1];
 
 	for (let i = 0; i < 13; i++) {
 		for (let y = 0; y < 4; y++) {
@@ -119,7 +124,12 @@ const endGame = function (player, multi) {
 		).innerHTML += `<div class="final-massage">${player} wins!</div>
 		`;
 	}
-
+	player1.valCarti = [];
+	player1.aces = [];
+	player1.hasAce = false;
+	dealer1.valCarti = [];
+	dealer1.aces = [];
+	dealer1.hasAce = false;
 	overlay.classList.remove(`hidden`);
 	modalWin.classList.remove(`hidden`);
 	indicatorJoc = false;
@@ -139,11 +149,44 @@ const giveCard = function (player) {
 		? (scorePlayer.textContent = Number(scorePlayer.textContent) + card.valoare)
 		: (scoreDealer.textContent =
 				Number(scoreDealer.textContent) + card.valoare);
-	player1.valCarti.push(card.valoare);
+
+	if (player === `player`) {
+		if (card.numar === `ace`) {
+			player1.aces.push(`1`);
+			player1.hasAce = true;
+		}
+		player1.valCarti.push(card.valoare);
+	} else {
+		if (card.numar === `ace`) {
+			dealer1.aces.push(`1`);
+			dealer1.hasAce = true;
+		}
+		dealer1.valCarti.push(card.valoare);
+	}
+
 	deck.carti.splice(
 		deck.carti.findIndex((elem) => elem === card),
 		1
 	);
+};
+const checkAces = function (player) {
+	if (player === `player`) {
+		if (
+			player1.hasAce &&
+			Number(scorePlayer.textContent) < 12 &&
+			player1.aces.length !== 2
+		) {
+			scorePlayer.textContent = Number(scorePlayer.textContent) + 10;
+		}
+	} else {
+		if (
+			dealer1.hasAce &&
+			Number(scoreDealer.textContent) < 12 &&
+			dealer1.aces.length !== 2
+		) {
+			scoreDealer.textContent = Number(scoreDealer.textContent) + 10;
+		}
+	}
 };
 /////////////////////// EVENTS ///////////////////////////////
 btnStart.addEventListener(`click`, function () {
@@ -178,30 +221,38 @@ btnClear.addEventListener(`click`, function () {
 	betAmount.textContent = `0`;
 });
 btnDeal.addEventListener(`click`, function () {
-	btnContainerPlay.classList.remove(`hidden`);
-	btnContainerBet.classList.add(`hidden`);
-	potAmount.textContent = betAmount.textContent;
-	giveCard(`player`);
-	giveCard(`player`);
-	giveCard(`dealer`);
+	if (betAmount.textContent !== `0`) {
+		btnContainerPlay.classList.remove(`hidden`);
+		btnContainerBet.classList.add(`hidden`);
+		potAmount.textContent = betAmount.textContent;
+		giveCard(`player`);
+		giveCard(`player`);
+		checkAces(`player`);
+		giveCard(`dealer`);
+		checkAces(`dealer`);
+	}
 });
 btnHit.addEventListener(`click`, function () {
 	if (Number(scorePlayer.textContent) < 21 && indicatorJoc) {
 		giveCard(`player`);
 	}
+	checkAces(`player`);
 	if (Number(scorePlayer.textContent) > 21 && indicatorJoc) {
 		giveCard(`dealer`);
+		checkAces(`dealer`);
 		endGame(`Dealer`);
 	}
 });
 btnStand.addEventListener(`click`, function () {
 	if (indicatorJoc) {
 		while (
-			Number(scoreDealer.textContent) < 21 &&
+			Number(scoreDealer.textContent) <= 21 &&
 			Number(scoreDealer.textContent) < 17
 		) {
 			giveCard(`dealer`);
+			checkAces(`dealer`);
 		}
+
 		if (
 			Number(scoreDealer.textContent) <= 21 &&
 			Number(scoreDealer.textContent) > Number(scorePlayer.textContent)
@@ -263,6 +314,7 @@ btnNewGame.addEventListener(`click`, function () {
 btnCloseModalRules.addEventListener(`click`, function () {
 	overlay.classList.add(`hidden`);
 	modalRules.classList.add(`hidden`);
+	btnCloseModalRules.classList.add(`hidden`);
 	console.log(`button pushed`);
 });
 btnCloseModalWin.addEventListener(`click`, function () {
