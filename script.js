@@ -42,11 +42,13 @@ const player1 = {
 	valCarti: [],
 	aces: [],
 	hasAce: false,
+	increment: [],
 };
 const dealer1 = {
 	valCarti: [],
 	aces: [],
 	hasAce: false,
+	increment: [],
 };
 const createDeck = function () {
 	class carte {
@@ -171,19 +173,30 @@ const giveCard = function (player) {
 const checkAces = function (player) {
 	if (player === `player`) {
 		if (
+			Number(scorePlayer.textContent) > 21 &&
+			player1.hasAce &&
+			player1.aces.length === 1 &&
+			player1.increment === 1
+		) {
+			scorePlayer.textContent = Number(scorePlayer.textContent) - 10;
+		}
+		if (
 			player1.hasAce &&
 			Number(scorePlayer.textContent) < 12 &&
 			player1.aces.length !== 2
 		) {
 			scorePlayer.textContent = Number(scorePlayer.textContent) + 10;
+			player1.increment.push(`1`);
 		}
 	} else {
 		if (
 			dealer1.hasAce &&
 			Number(scoreDealer.textContent) < 12 &&
-			dealer1.aces.length !== 2
+			dealer1.aces.length !== 2 &&
+			dealer1.increment === 1
 		) {
 			scoreDealer.textContent = Number(scoreDealer.textContent) + 10;
+			dealer1.increment.push(`1`);
 		}
 	}
 };
