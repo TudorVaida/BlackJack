@@ -23,7 +23,8 @@ const btnHit = document.querySelector(`.btnHit`);
 const btnClear = document.querySelector(`.btnClear`);
 const btnBet = document.querySelector(`.btnBet`);
 const btnDeal = document.querySelector(`.btnDeal`);
-const btnNewGame = document.querySelector(`.btnNewGame`);
+const btnNewGameRules = document.querySelector(`.btn--newGame--rules`);
+const btnNewGameWin = document.querySelector(`.btn--newGame--win`);
 const btnRules = document.querySelector(`.btnRules`);
 const btnCloseModalWin = document.querySelector(`.close-modal-win`);
 const btnCloseModalRules = document.querySelector(`.close-modal-rules`);
@@ -103,26 +104,24 @@ const startGame = function () {
 	scorePlayer.textContent = `0`;
 	creditAmount.textContent = `500`;
 	const carte = document.querySelectorAll(`.carte`);
-	carte.forEach((elem) => elem.classList.add(`hidden`));
+	carte.forEach((elem) => elem.remove());
 	const finalMassage = document.querySelectorAll(`.final-massage`);
-	finalMassage.forEach((elem) => elem.classList.add(`hidden`));
+	finalMassage.forEach((elem) => elem.remove());
 	indicatorJoc = true;
 	deck = createDeck();
 };
 startGame();
 const endGame = function (player, multi) {
+	const html_winner = `<div class="final-massage">${player} wins!</div>
+	<div class="final-massage">You win ${
+		Number(betAmount.textContent) * multi
+	} $</div>`;
+	const html_massage = `<div class="final-massage">Dealer wins!</div>
+	`;
 	if (player === `Player`) {
-		document.querySelector(
-			`.modal--win`
-		).innerHTML += `<div class="final-massage">${player} wins!</div>
-		<div class="final-massage">You win ${
-			Number(betAmount.textContent) * multi
-		} $</div>`;
+		modalWin.insertAdjacentHTML("afterbegin", html_winner);
 	} else {
-		document.querySelector(
-			`.modal--win`
-		).innerHTML += `<div class="final-massage">${player} wins!</div>
-		`;
+		modalWin.insertAdjacentHTML("afterbegin", html_massage);
 	}
 	player1.valCarti = [];
 	player1.aces = [];
@@ -264,7 +263,8 @@ btnStand.addEventListener(`click`, function () {
 		) {
 			if (
 				player1.valCarti.length === 2 &&
-				player1.valCarti.reduce((acc, elem) => acc + elem) === 21
+				Number(scorePlayer.textContent) === 21 &&
+				player1.hasAce
 			) {
 				creditAmount.textContent =
 					Number(creditAmount.textContent) +
@@ -281,7 +281,8 @@ btnStand.addEventListener(`click`, function () {
 		) {
 			if (
 				player1.valCarti.length === 2 &&
-				player1.valCarti.reduce((acc, elem) => acc + elem) === 21
+				Number(scorePlayer.textContent) === 21 &&
+				player1.hasAce
 			) {
 				creditAmount.textContent =
 					Number(creditAmount.textContent) +
@@ -304,7 +305,14 @@ btnRules.addEventListener(`click`, function () {
 	overlay.classList.remove(`hidden`);
 	modalRules.classList.remove(`hidden`);
 });
-btnNewGame.addEventListener(`click`, function () {
+btnNewGameRules.addEventListener(`click`, function () {
+	newGame();
+	overlay.classList.add(`hidden`);
+	modalRules.classList.add(`hidden`);
+	modalWin.classList.add(`hidden`);
+	console.log(`button pushed`);
+});
+btnNewGameWin.addEventListener(`click`, function () {
 	newGame();
 	overlay.classList.add(`hidden`);
 	modalRules.classList.add(`hidden`);
