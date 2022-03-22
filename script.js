@@ -75,18 +75,20 @@ const createDeck = function () {
 	}
 	return deck;
 };
+const cleanUI = function () {
+	scoreDealer.textContent = `0`;
+	scorePlayer.textContent = `0`;
+	const carte = document.querySelectorAll(`.carte`);
+	carte.forEach((elem) => elem.remove());
+	const finalMassage = document.querySelectorAll(`.final-massage`);
+	finalMassage.forEach((elem) => elem.remove());
+};
 const newGame = function () {
 	btnContainerPlay.classList.add(`hidden`);
 	btnContainerBet.classList.remove(`hidden`);
 	inputBet.value = ` `;
 	betAmount.textContent = `0`;
 	potAmount.textContent = `0`;
-	scoreDealer.textContent = `0`;
-	scorePlayer.textContent = `0`;
-	const carte = document.querySelectorAll(`.carte`);
-	carte.forEach((elem) => elem.classList.add(`hidden`));
-	const finalMassage = document.querySelectorAll(`.final-massage`);
-	finalMassage.forEach((elem) => elem.classList.add(`hidden`));
 	indicatorJoc = true;
 	deck = createDeck();
 };
@@ -118,7 +120,7 @@ const endGame = function (player, multi) {
 	<div class="final-massage">You win ${
 		Number(betAmount.textContent) * multi
 	} $</div>`;
-	const html_massage = `<div class="final-massage">Dealer wins!</div>
+	const html_massage = `<div class="final-massage">${player} wins!</div>
 	`;
 	if (player === `Player`) {
 		modalWin.insertAdjacentHTML("afterbegin", html_winner);
@@ -131,8 +133,8 @@ const endGame = function (player, multi) {
 	dealer1.valCarti = [];
 	dealer1.aces = [];
 	dealer1.hasAce = false;
-	overlay.classList.remove(`hidden`);
-	modalWin.classList.remove(`hidden`);
+	setTimeout(() => overlay.classList.remove(`hidden`), 1000);
+	setTimeout(() => modalWin.classList.remove(`hidden`), 1000);
 	indicatorJoc = false;
 };
 const random = function (arr) {
@@ -192,8 +194,15 @@ const checkAces = function (player) {
 		if (
 			dealer1.hasAce &&
 			Number(scoreDealer.textContent) < 12 &&
-			dealer1.aces.length !== 2 &&
+			dealer1.aces.length === 1 &&
 			dealer1.increment === 1
+		) {
+			scoreDealer.textContent = Number(scoreDealer.textContent) - 10;
+		}
+		if (
+			dealer1.hasAce &&
+			Number(scoreDealer.textContent) < 12 &&
+			dealer1.aces.length !== 2
 		) {
 			scoreDealer.textContent = Number(scoreDealer.textContent) + 10;
 			dealer1.increment.push(`1`);
@@ -233,6 +242,7 @@ btnClear.addEventListener(`click`, function () {
 	betAmount.textContent = `0`;
 });
 btnDeal.addEventListener(`click`, function () {
+	cleanUI();
 	if (betAmount.textContent !== `0`) {
 		btnContainerPlay.classList.remove(`hidden`);
 		btnContainerBet.classList.add(`hidden`);
