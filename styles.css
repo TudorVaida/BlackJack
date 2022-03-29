@@ -394,3 +394,19 @@ li {
 	line-height: 16vh;
 	text-align: center;
 }
+
+@media (max-width: 950px) {
+	.btnDeal {
+		position: absolute;
+		right: 0.5vh;
+		bottom: 20vh;
+		width: 20%;
+	}
+
+	.btnContainer--play {
+		justify-content: space-between;
+	}
+	.btnContainer--play button {
+		width: 20%;
+	}
+}
